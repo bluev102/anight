@@ -1,85 +1,64 @@
-# Agents System (V1)
+# anight (Core-First Architecture)
 
-A language-agnostic and framework-agnostic multi-agent workflow system based on declarative config and folder-based handoff contracts.
+anight is a language-agnostic, framework-agnostic multi-agent workflow system with an immutable specification core.
 
-## Architecture Summary
-- Pipeline mode: sequential (6 stages)
-- Communication pattern: file handoff (`handoff_*.json`)
-- Source of truth: `config/*.yml` + `config/schemas/*.json`
-- Validation strategy:
-  - Handoff contract validation: `scripts/validate_handoff.py`
-  - Config validation (agents/workflow): `scripts/validate_config.py`
+## Core-First Philosophy
 
-## Folder Layout
-- `system.yml`: system manifest
-- `config/`: agent/workflow registries and schemas
-- `agents/`: per-agent instructions (`persona.md`, `skills.yml`, `memory/`)
-- `shared/`: shared context, handoff template, shared schema copy
-- `workflows/`: executable workflow description
-- `stages/`: pipeline inputs/outputs and handoff chain
-- `scripts/`: validation and orchestration scripts
-- `research/`: architecture rationale and research notes
+The architecture is split into three explicit layers:
+- `core/`: immutable specification (contracts, schemas, role definitions)
+- `adapters/`: replaceable implementations (Python is one adapter)
+- `workspace/`: runtime data produced by executions
 
-## Quick Start
-1. Validate config files:
+If you want to implement anight in another language, `core/` is the source of truth you should read first.
+See `core/PHILOSOPHY.md` for the rationale and governance model.
 
-```bash
-python3 scripts/validate_config.py --all
+## Structure
+
+```text
+anight/
+├── core/                # Immutable contracts and system definitions
+├── adapters/
+│   └── python/          # Python implementation of core contracts
+└── workspace/           # Runtime artifacts (stages, memory)
 ```
 
-2. Validate handoff contracts (strict mode):
+## Quick Start (Python Adapter)
+
+1. Validate declarative config:
 
 ```bash
-python3 scripts/validate_handoff.py --dir stages --strict
+python3 adapters/python/scripts/validate_config.py --all
+```
+
+2. Validate runtime handoff contracts:
+
+```bash
+python3 adapters/python/scripts/validate_handoff.py --dir workspace/stages --strict
 ```
 
 3. Validate a single handoff file:
 
 ```bash
-python3 scripts/validate_handoff.py --file stages/01_requirements/output/handoff_to_ba.json --strict
+python3 adapters/python/scripts/validate_handoff.py --file workspace/stages/01_requirements/output/handoff_to_ba.json --strict
 ```
 
-4. Run the full preflight gate:
+4. Run full preflight gate:
 
 ```bash
-python3 scripts/preflight.py
+python3 adapters/python/scripts/preflight.py
 ```
 
-5. CI gate:
+## Optional Dependencies
 
-- `.github/workflows/ci.yml` runs the same preflight gate on push, pull request, and manual dispatch.
-- Treat preflight success as the merge requirement for V1.
-
-## Optional Python Dependencies
-The project supports optional richer validation if these packages are available:
+For richer validation:
 
 ```bash
 python3 -m pip install pyyaml jsonschema
 ```
 
-If dependencies are missing, config validation still runs in fallback structural mode.
+Fallback structural validation is still available when dependencies are missing.
 
-## Workflow Contract Rules (V1)
-- Required handoff fields include: `contract_version`, `trace_id`, `stage_id`, `from_agent`, `to_agent`, `created_at`, `status`, `review_required`, `artifacts`.
-- `review_required=true` requires `reviewer_agent`.
-- `status=rejected` requires `review_reason`.
-- `rollback_to_stage` is a marker field only in V1.
+## Contribution Rule
 
-## Roadmap Pointer
-Execution roadmap is documented in `plan-v1.md`.
-
-## Current Status
-- A1 implemented: documentation baseline available in this file.
-- A2 implemented:
-  - `config/schemas/agent.schema.json`
-  - `scripts/validate_config.py`
-  - existing workflow/handoff schema validation chain remains active.
-- A3 implemented:
-  - `scripts/orchestrator.py`
-- B1/B2 implemented:
-  - state transition validation
-  - invalid fixture suite under `tests/fixtures/invalid_handoffs/`
-- B3 implemented:
-  - `scripts/preflight.py`
-- CI gate implemented:
-  - `.github/workflows/ci.yml`
+Treat `core/` as read-only unless you are intentionally changing architecture philosophy/contracts.
+All changes under `core/` require architectural review.

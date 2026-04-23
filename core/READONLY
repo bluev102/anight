@@ -1,0 +1,3 @@
+This directory is the immutable philosophical core of anight.
+No file here should be modified without explicit architectural review.
+See PHILOSOPHY.md for rationale.

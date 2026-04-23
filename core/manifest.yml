@@ -1,0 +1,9 @@
+name: agents-system
+version: 1.0.0
+architecture-type: core-first
+design-principles:
+  - immutable-core-spec
+  - replaceable-adapters
+  - runtime-data-in-workspace
+  - language-agnostic
+  - framework-agnostic

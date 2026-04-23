@@ -32,4 +32,4 @@ jobs:
           python -m pip install pyyaml jsonschema
 
       - name: Run preflight gate
-        run: python scripts/preflight.py
+        run: python adapters/python/scripts/preflight.py

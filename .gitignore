@@ -38,8 +38,8 @@ dist/
 *.bak
 
 # Project scratch files
-stages/_tmp*.json
-tests/**/_tmp*.json
+workspace/stages/_tmp*.json
+adapters/python/tests/**/_tmp*.json
 
 # Copilot / agent customization files that are not part of the repo runtime
 .github/copilot-instructions.md

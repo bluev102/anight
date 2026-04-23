@@ -1,10 +1,12 @@
-name: agents-system
-version: 1.0.0
-architecture: sequential-pipeline
-pattern: folder-based-handoff
-language_agnostic: true
-framework_agnostic: true
+manifest_ref: core/manifest.yml
+
+runtime:
+  adapter: python
+  scripts_dir: adapters/python/scripts
+  workflow_config: core/config/workflow.yml
+  stages_dir: workspace/stages
+
 metadata:
   created_at: "2026-04-23"
   owner: "team"
-  notes: "Workflow Contract v1 bootstrap"
+  notes: "Runtime metadata for the default Python adapter."

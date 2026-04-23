@@ -1,0 +1,72 @@
+workflow_id: software_dev_v1
+contract_version: "1.0"
+steps:
+  - step: 1
+    stage_id: 01_requirements
+    owner_agent: po
+    consumes:
+      - workspace/stages/01_requirements/input/brief.md
+      - workspace/stages/01_requirements/input/handoff_from_initiator.json
+    produces:
+      - workspace/stages/01_requirements/output/product_vision.md
+      - workspace/stages/01_requirements/output/user_stories.md
+      - workspace/stages/01_requirements/output/backlog_prioritized.md
+      - workspace/stages/01_requirements/output/handoff_to_ba.json
+    handoff_to_next: workspace/stages/02_analysis/input/handoff_from_po.json
+  - step: 2
+    stage_id: 02_analysis
+    owner_agent: ba
+    consumes:
+      - workspace/stages/02_analysis/input/handoff_from_po.json
+    produces:
+      - workspace/stages/02_analysis/output/srs.md
+      - workspace/stages/02_analysis/output/business_flow.md
+      - workspace/stages/02_analysis/output/data_dictionary.md
+      - workspace/stages/02_analysis/output/handoff_to_designer.json
+    handoff_to_next: workspace/stages/03_design/input/handoff_from_ba.json
+  - step: 3
+    stage_id: 03_design
+    owner_agent: designer
+    consumes:
+      - workspace/stages/03_design/input/handoff_from_ba.json
+    produces:
+      - workspace/stages/03_design/output/user_journey.md
+      - workspace/stages/03_design/output/wireframes.md
+      - workspace/stages/03_design/output/design_system.md
+      - workspace/stages/03_design/output/prototype_notes.md
+      - workspace/stages/03_design/output/handoff_to_dev.json
+    handoff_to_next: workspace/stages/04_implementation/input/handoff_from_designer.json
+  - step: 4
+    stage_id: 04_implementation
+    owner_agent: developer
+    consumes:
+      - workspace/stages/04_implementation/input/handoff_from_designer.json
+    produces:
+      - workspace/stages/04_implementation/output/architecture_notes.md
+      - workspace/stages/04_implementation/output/database_schema.md
+      - workspace/stages/04_implementation/output/api_contracts.md
+      - workspace/stages/04_implementation/output/implementation_plan.md
+      - workspace/stages/04_implementation/output/handoff_to_tester.json
+    handoff_to_next: workspace/stages/05_testing/input/handoff_from_dev.json
+  - step: 5
+    stage_id: 05_testing
+    owner_agent: tester
+    consumes:
+      - workspace/stages/05_testing/input/handoff_from_dev.json
+    produces:
+      - workspace/stages/05_testing/output/test_plan.md
+      - workspace/stages/05_testing/output/test_cases.md
+      - workspace/stages/05_testing/output/bug_report.md
+      - workspace/stages/05_testing/output/quality_summary.md
+      - workspace/stages/05_testing/output/handoff_to_pm.json
+    handoff_to_next: workspace/stages/06_delivery/input/handoff_from_tester.json
+  - step: 6
+    stage_id: 06_delivery
+    owner_agent: pm
+    consumes:
+      - workspace/stages/06_delivery/input/handoff_from_tester.json
+    produces:
+      - workspace/stages/06_delivery/output/project_summary.md
+      - workspace/stages/06_delivery/output/risk_assessment.md
+      - workspace/stages/06_delivery/output/delivery_report.md
+      - workspace/stages/06_delivery/output/lessons_learned.md
