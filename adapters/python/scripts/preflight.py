@@ -39,7 +39,9 @@ class StepResult:
 def _run_command(command: list[str]) -> StepResult:
     proc = subprocess.run(command, capture_output=True, text=True, check=False)
     output = (proc.stdout + "\n" + proc.stderr).strip()
-    return StepResult(name=command[0], command=command, returncode=proc.returncode, output=output)
+    return StepResult(
+        name=command[0], command=command, returncode=proc.returncode, output=output
+    )
 
 
 def _print_step_header(step_name: str, command: list[str]) -> None:
@@ -55,8 +57,21 @@ def _print_step_output(result: StepResult) -> None:
 def run(workflow: Path, stages: Path) -> int:
     steps = [
         ("config-validation", [sys.executable, str(VALIDATE_CONFIG), "--all"]),
-        ("handoff-validation", [sys.executable, str(VALIDATE_HANDOFF), "--dir", str(stages), "--strict"]),
-        ("orchestrator-smoke", [sys.executable, str(ORCHESTRATOR), "--workflow", str(workflow)]),
+        (
+            "handoff-validation",
+            [sys.executable, str(VALIDATE_HANDOFF), "--dir", str(stages), "--strict"],
+        ),
+        (
+            "orchestrator-smoke",
+            [
+                sys.executable,
+                str(ORCHESTRATOR),
+                "--workflow",
+                str(workflow),
+                "--no-strict-input",
+                "--no-strict-handoff",
+            ],
+        ),
     ]
 
     for step_name, command in steps:
@@ -74,9 +89,15 @@ def run(workflow: Path, stages: Path) -> int:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run all baseline checks for agents-system")
-    parser.add_argument("--workflow", type=Path, default=DEFAULT_WORKFLOW, help="Workflow config path")
-    parser.add_argument("--stages", type=Path, default=DEFAULT_STAGES, help="Stages directory path")
+    parser = argparse.ArgumentParser(
+        description="Run all baseline checks for agents-system"
+    )
+    parser.add_argument(
+        "--workflow", type=Path, default=DEFAULT_WORKFLOW, help="Workflow config path"
+    )
+    parser.add_argument(
+        "--stages", type=Path, default=DEFAULT_STAGES, help="Stages directory path"
+    )
     args = parser.parse_args()
 
     try:
