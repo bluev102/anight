@@ -70,6 +70,17 @@ def _load_workflow_policy() -> dict[str, Any]:
             continue
 
         if in_transitions:
+            inline_empty_match = ""
+            for status in VALID_STATUS:
+                if stripped == f"{status}: []":
+                    inline_empty_match = status
+                    break
+
+            if inline_empty_match:
+                current_status = inline_empty_match
+                policy["transitions"][current_status] = []
+                continue
+
             status_match = stripped[:-1] if stripped.endswith(":") else ""
             if status_match in VALID_STATUS:
                 current_status = status_match
