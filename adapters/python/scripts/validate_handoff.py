@@ -164,7 +164,10 @@ def _validate_manual(contract: dict[str, Any]) -> list[str]:
     if contract["review_required"] and "reviewer_agent" not in contract:
         errors.append("reviewer_agent is required when review_required=true")
 
-    if contract["status"] in {"approved", "rejected", "revised"} and not contract["review_required"]:
+    if (
+        contract["status"] in {"approved", "rejected", "revised"}
+        and not contract["review_required"]
+    ):
         errors.append(f"status={contract['status']} requires review_required=true")
 
     if contract["status"] == "draft" and contract["review_required"]:
@@ -179,28 +182,43 @@ def _validate_manual(contract: dict[str, Any]) -> list[str]:
     return errors
 
 
-def _validate_state_machine(contract: dict[str, Any], policy: dict[str, Any]) -> list[str]:
+def _validate_state_machine(
+    contract: dict[str, Any], policy: dict[str, Any]
+) -> list[str]:
     errors: list[str] = []
 
     allowed_statuses = set(policy.get("allowed_statuses", []))
     if contract.get("status") not in allowed_statuses:
-        errors.append(f"status {contract.get('status')} is not allowed by workflow state machine")
+        errors.append(
+            f"status {contract.get('status')} is not allowed by workflow state machine"
+        )
         return errors
 
-    if contract["status"] in {"approved", "rejected", "revised"} and not contract["review_required"]:
-        errors.append(f"status={contract['status']} cannot be used when review_required=false")
+    if (
+        contract["status"] in {"approved", "rejected", "revised"}
+        and not contract["review_required"]
+    ):
+        errors.append(
+            f"status={contract['status']} cannot be used when review_required=false"
+        )
 
     if contract["status"] == "draft" and contract["review_required"]:
         errors.append("draft handoffs must not require review")
 
     transitions = policy.get("transitions", {})
-    if contract["status"] in transitions and not isinstance(transitions[contract["status"]], list):
-        errors.append(f"state machine transition list for {contract['status']} must be an array")
+    if contract["status"] in transitions and not isinstance(
+        transitions[contract["status"]], list
+    ):
+        errors.append(
+            f"state machine transition list for {contract['status']} must be an array"
+        )
 
     return errors
 
 
-def _validate_with_jsonschema(contract: dict[str, Any], schema: dict[str, Any]) -> list[str]:
+def _validate_with_jsonschema(
+    contract: dict[str, Any], schema: dict[str, Any]
+) -> list[str]:
     try:
         import jsonschema
     except ImportError:
@@ -225,7 +243,9 @@ def _iter_handoff_files(path: Path) -> Iterable[Path]:
             yield candidate
 
 
-def _validate_file(file_path: Path, schema: dict[str, Any], policy: dict[str, Any], strict: bool) -> tuple[bool, list[str]]:
+def _validate_file(
+    file_path: Path, schema: dict[str, Any], policy: dict[str, Any], strict: bool
+) -> tuple[bool, list[str]]:
     try:
         payload = _load_json(file_path)
     except Exception as exc:  # pylint: disable=broad-except
@@ -263,9 +283,13 @@ def _validate_file(file_path: Path, schema: dict[str, Any], policy: dict[str, An
 def main() -> int:
     parser = argparse.ArgumentParser(description="Validate handoff contracts")
     parser.add_argument("--file", type=Path, help="Validate a single handoff json file")
-    parser.add_argument("--dir", type=Path, help="Validate all handoff_*.json files in a directory")
+    parser.add_argument(
+        "--dir", type=Path, help="Validate all handoff_*.json files in a directory"
+    )
     parser.add_argument("--schema", type=Path, default=SCHEMA_PATH, help="Schema path")
-    parser.add_argument("--strict", action="store_true", help="Disallow unknown top-level keys")
+    parser.add_argument(
+        "--strict", action="store_true", help="Disallow unknown top-level keys"
+    )
     args = parser.parse_args()
 
     if not args.file and not args.dir:
@@ -277,8 +301,11 @@ def main() -> int:
     targets = list(_iter_handoff_files(target_path))
 
     if not targets:
+        if args.file:
+            print(f"File not found: {args.file}")
+            return 1
         print("No handoff files found.")
-        return 1
+        return 0
 
     has_error = False
     for target in targets:
