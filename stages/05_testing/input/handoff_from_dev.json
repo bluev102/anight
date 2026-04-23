@@ -1,0 +1,20 @@
+{
+  "contract_version": "1.0",
+  "trace_id": "trace-demo-001",
+  "stage_id": "04_implementation",
+  "from_agent": "developer",
+  "to_agent": "tester",
+  "created_at": "2026-04-23T09:40:00Z",
+  "status": "submitted",
+  "review_required": true,
+  "reviewer_agent": "tester",
+  "artifacts": {
+    "input_refs": ["stages/04_implementation/input/handoff_from_designer.json"],
+    "output_refs": [
+      "stages/04_implementation/output/architecture_notes.md",
+      "stages/04_implementation/output/database_schema.md",
+      "stages/04_implementation/output/api_contracts.md",
+      "stages/04_implementation/output/implementation_plan.md"
+    ]
+  }
+}

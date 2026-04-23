@@ -1,0 +1,51 @@
+# Workspace / editor noise
+.kilo/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+ENV/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+coverage.xml
+htmlcov/
+
+# Build / packaging artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Logs and temp files
+*.log
+*.tmp
+*.temp
+*.bak
+
+# Project scratch files
+stages/_tmp*.json
+tests/**/_tmp*.json
+
+# Copilot / agent customization files that are not part of the repo runtime
+.github/copilot-instructions.md
+.github/instructions/
+
+# Internal docs / planning (do not publish)
+docs/
+plan-v1.md
+release-checklist-v1.md

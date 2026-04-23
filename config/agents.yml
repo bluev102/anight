@@ -1,0 +1,55 @@
+agents:
+  - id: po
+    name: Product Owner
+    folder: agents/01_product_owner
+    stage: 01_requirements
+    persona_file: agents/01_product_owner/persona.md
+    skills_file: agents/01_product_owner/skills.yml
+    input_dir: stages/01_requirements/input
+    output_dir: stages/01_requirements/output
+    description: Owns product vision and backlog definition.
+  - id: ba
+    name: Business Analyst
+    folder: agents/02_business_analyst
+    stage: 02_analysis
+    persona_file: agents/02_business_analyst/persona.md
+    skills_file: agents/02_business_analyst/skills.yml
+    input_dir: stages/02_analysis/input
+    output_dir: stages/02_analysis/output
+    description: Translates business requirements into structured specifications.
+  - id: designer
+    name: UI/UX Designer
+    folder: agents/03_ui_ux_designer
+    stage: 03_design
+    persona_file: agents/03_ui_ux_designer/persona.md
+    skills_file: agents/03_ui_ux_designer/skills.yml
+    input_dir: stages/03_design/input
+    output_dir: stages/03_design/output
+    description: Produces user journey, wireframe, and design system artifacts.
+  - id: developer
+    name: Developer
+    folder: agents/04_developer
+    stage: 04_implementation
+    persona_file: agents/04_developer/persona.md
+    skills_file: agents/04_developer/skills.yml
+    input_dir: stages/04_implementation/input
+    output_dir: stages/04_implementation/output
+    description: Produces implementation-ready technical design artifacts.
+  - id: tester
+    name: Tester
+    folder: agents/05_tester
+    stage: 05_testing
+    persona_file: agents/05_tester/persona.md
+    skills_file: agents/05_tester/skills.yml
+    input_dir: stages/05_testing/input
+    output_dir: stages/05_testing/output
+    description: Verifies quality and reports validation outcomes.
+  - id: pm
+    name: Project Manager
+    folder: agents/06_project_manager
+    stage: 06_delivery
+    persona_file: agents/06_project_manager/persona.md
+    skills_file: agents/06_project_manager/skills.yml
+    input_dir: stages/06_delivery/input
+    output_dir: stages/06_delivery/output
+    description: Consolidates delivery reports and final project status.

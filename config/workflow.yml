@@ -1,0 +1,73 @@
+workflow:
+  id: software_dev_v1
+  contract_version: "1.0"
+  mode: sequential
+  stages:
+    - id: 01_requirements
+      order: 1
+      agent_id: po
+      input_dir: stages/01_requirements/input
+      output_dir: stages/01_requirements/output
+      handoff_out: stages/01_requirements/output/handoff_to_ba.json
+    - id: 02_analysis
+      order: 2
+      agent_id: ba
+      input_dir: stages/02_analysis/input
+      output_dir: stages/02_analysis/output
+      handoff_out: stages/02_analysis/output/handoff_to_designer.json
+    - id: 03_design
+      order: 3
+      agent_id: designer
+      input_dir: stages/03_design/input
+      output_dir: stages/03_design/output
+      handoff_out: stages/03_design/output/handoff_to_dev.json
+    - id: 04_implementation
+      order: 4
+      agent_id: developer
+      input_dir: stages/04_implementation/input
+      output_dir: stages/04_implementation/output
+      handoff_out: stages/04_implementation/output/handoff_to_tester.json
+    - id: 05_testing
+      order: 5
+      agent_id: tester
+      input_dir: stages/05_testing/input
+      output_dir: stages/05_testing/output
+      handoff_out: stages/05_testing/output/handoff_to_pm.json
+    - id: 06_delivery
+      order: 6
+      agent_id: pm
+      input_dir: stages/06_delivery/input
+      output_dir: stages/06_delivery/output
+      handoff_out: stages/06_delivery/output/handoff_terminal.json
+rules:
+  handoff:
+    schema: config/schemas/handoff.schema.json
+    strict_required_fields: true
+    allow_controlled_extensions: true
+  review_gate:
+    enabled: true
+    reject_requires_reason: true
+  rollback:
+    mode: marker_only
+    marker_field: rollback_to_stage
+  state_machine:
+    allowed_statuses:
+      - draft
+      - submitted
+      - approved
+      - rejected
+      - revised
+    transitions:
+      draft:
+        - submitted
+      submitted:
+        - approved
+        - rejected
+        - revised
+      rejected:
+        - revised
+      revised:
+        - submitted
+        - approved
+        - rejected
+      approved:

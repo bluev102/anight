@@ -1,0 +1,11 @@
+skills:
+  - structured_handoff_authoring
+  - artifact_traceability
+  - review_gate_compliance
+constraints:
+  - follow_handoff_schema: true
+  - write_only_own_stage_output: true
+  - no_framework_lock_in: true
+output_format:
+  handoff: json
+  docs: markdown

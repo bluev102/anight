@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agents-system.local/schemas/handoff.schema.json",
+  "title": "Workflow Handoff Contract v1",
+  "description": "Language-agnostic handoff contract between adjacent stages.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "trace_id",
+    "stage_id",
+    "from_agent",
+    "to_agent",
+    "created_at",
+    "status",
+    "review_required",
+    "artifacts"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+$"
+    },
+    "trace_id": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128
+    },
+    "stage_id": {
+      "type": "string",
+      "enum": [
+        "01_requirements",
+        "02_analysis",
+        "03_design",
+        "04_implementation",
+        "05_testing",
+        "06_delivery"
+      ]
+    },
+    "from_agent": {
+      "type": "string",
+      "enum": ["po", "ba", "designer", "developer", "tester", "pm"]
+    },
+    "to_agent": {
+      "type": "string",
+      "enum": ["po", "ba", "designer", "developer", "tester", "pm"]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "submitted", "approved", "rejected", "revised"]
+    },
+    "review_required": {
+      "type": "boolean"
+    },
+    "reviewer_agent": {
+      "type": "string",
+      "enum": ["po", "ba", "designer", "developer", "tester", "pm"]
+    },
+    "review_reason": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "rollback_to_stage": {
+      "type": "string",
+      "enum": [
+        "01_requirements",
+        "02_analysis",
+        "03_design",
+        "04_implementation",
+        "05_testing"
+      ]
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["input_refs", "output_refs"],
+      "properties": {
+        "input_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 3
+          }
+        },
+        "output_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 3
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Controlled extension slot for per-agent metadata.",
+      "additionalProperties": true
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "review_required": { "const": true }
+        }
+      },
+      "then": {
+        "required": ["reviewer_agent"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": { "const": "rejected" }
+        }
+      },
+      "then": {
+        "required": ["review_reason"]
+      }
+    }
+  ]
+}

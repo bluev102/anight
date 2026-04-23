@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agents-system.local/schemas/workflow.schema.json",
+  "title": "Workflow Definition v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["workflow", "rules"],
+  "properties": {
+    "workflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "contract_version", "mode", "stages"],
+      "properties": {
+        "id": { "type": "string", "minLength": 3 },
+        "contract_version": { "type": "string", "pattern": "^1\\.[0-9]+$" },
+        "mode": { "type": "string", "enum": ["sequential"] },
+        "stages": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "order",
+              "agent_id",
+              "input_dir",
+              "output_dir",
+              "handoff_out"
+            ],
+            "properties": {
+              "id": { "type": "string" },
+              "order": { "type": "integer", "minimum": 1 },
+              "agent_id": {
+                "type": "string",
+                "enum": ["po", "ba", "designer", "developer", "tester", "pm"]
+              },
+              "input_dir": { "type": "string" },
+              "output_dir": { "type": "string" },
+              "handoff_out": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["handoff", "review_gate", "rollback", "state_machine"],
+      "properties": {
+        "handoff": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["schema", "strict_required_fields", "allow_controlled_extensions"],
+          "properties": {
+            "schema": { "type": "string" },
+            "strict_required_fields": { "type": "boolean" },
+            "allow_controlled_extensions": { "type": "boolean" }
+          }
+        },
+        "review_gate": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["enabled", "reject_requires_reason"],
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "reject_requires_reason": { "type": "boolean" }
+          }
+        },
+        "rollback": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mode", "marker_field"],
+          "properties": {
+            "mode": { "type": "string", "enum": ["marker_only"] },
+            "marker_field": { "type": "string", "const": "rollback_to_stage" }
+          }
+        },
+        "state_machine": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["allowed_statuses", "transitions"],
+          "properties": {
+            "allowed_statuses": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "enum": ["draft", "submitted", "approved", "rejected", "revised"]
+              }
+            },
+            "transitions": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["draft", "submitted", "rejected", "revised", "approved"],
+              "properties": {
+                "draft": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": ["draft", "submitted", "approved", "rejected", "revised"]
+                  }
+                },
+                "submitted": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": ["draft", "submitted", "approved", "rejected", "revised"]
+                  }
+                },
+                "rejected": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": ["draft", "submitted", "approved", "rejected", "revised"]
+                  }
+                },
+                "revised": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": ["draft", "submitted", "approved", "rejected", "revised"]
+                  }
+                },
+                "approved": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": ["draft", "submitted", "approved", "rejected", "revised"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
